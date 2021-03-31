@@ -1,0 +1,7 @@
+name: Service
+host: localhost
+port: 7777
+flows:
+  - name: Noise Serverless
+    host: localhost
+    port: 6262
