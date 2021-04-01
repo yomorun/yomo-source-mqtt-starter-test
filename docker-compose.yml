@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+  broker-flow:
+    image: broker-flow:latest
+    container_name: broker-flow
+    command: ["sh", "-c", "./yomo run ./cmd/broker-flow/app.go -p 5252"]
+    restart: always
+    ports:
+      - "5252:5252/udp"
+    networks:
+      - weaktest
+
+networks:
+  weaktest:
+    driver: bridge

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/reactivex/rxgo/v2"
-	y3 "github.com/yomorun/y3-codec-golang"
+	"github.com/yomorun/y3-codec-golang"
 	"github.com/yomorun/yomo/pkg/rx"
 )
 
