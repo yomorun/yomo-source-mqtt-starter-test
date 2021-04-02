@@ -1,7 +1,7 @@
 name: Service
-host: localhost
+host: 0.0.0.0
 port: 8888
 flows:
   - name: Noise Serverless
-    host: localhost
+    host: broker-flow
     port: 5252

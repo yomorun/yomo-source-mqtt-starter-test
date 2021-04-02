@@ -1,0 +1,6 @@
+.so
+.temp/bak/cmd/yomo
+Dockerfile
+docker-compose.yml
+start.sh
+stop.sh

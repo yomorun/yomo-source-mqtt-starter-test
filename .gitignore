@@ -15,5 +15,4 @@
 # vendor/
 *.temp
 bin/
-cmd/yomo
 yomo

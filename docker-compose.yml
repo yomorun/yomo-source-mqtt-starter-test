@@ -2,12 +2,131 @@ version: '3.5'
 
 services:
   broker-flow:
-    image: broker-flow:latest
+    image: yomo/source-test:latest
     container_name: broker-flow
     command: ["sh", "-c", "./yomo run ./cmd/broker-flow/app.go -p 5252"]
     restart: always
+    cap_add:
+      - NET_ADMIN
     ports:
       - "5252:5252/udp"
+    networks:
+      - weaktest
+
+  broker-zipper:
+    image: yomo/source-test:latest
+    container_name: broker-zipper
+    command: ["sh", "-c", "./yomo wf run ./cmd/broker-zipper/workflow.yaml"]
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    links:
+      - broker-flow
+    depends_on:
+      - broker-flow
+    ports:
+      - "8888:8888/udp"
+    networks:
+      - weaktest
+
+  broker-source:
+    image: yomo/source-test:latest
+    container_name: broker-source
+    command: ["sh", "-c", "go run ./cmd/broker-source/main.go"]
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - YOMO_SOURCE_MQTT_ZIPPER_ADDR=broker-zipper:8888
+      - YOMO_SOURCE_MQTT_BROKER_ADDR=0.0.0.0:2883
+    links:
+      - broker-zipper
+    depends_on:
+      - broker-zipper
+    ports:
+      - "2883:2883"
+    networks:
+      - weaktest
+
+  broker-emit:
+    image: yomo/source-test:latest
+    container_name: broker-emit
+    command: ["sh", "-c", "go run ./cmd/broker-emit/main.go"]
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - YOMO_SOURCE_MQTT_BROKER_ADDR=tcp://broker-source:2883
+      - YOMO_SOURCE_MQTT_PUB_INTERVAL=500
+    links:
+      - broker-source
+    depends_on:
+      - broker-source
+    networks:
+      - weaktest
+
+
+  native-flow:
+    image: yomo/source-test:latest
+    container_name: native-flow
+    command: ["sh", "-c", "./yomo run ./cmd/native-flow/app.go -p 6262"]
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "6262:6262/udp"
+    networks:
+      - weaktest
+
+  native-zipper:
+    image: yomo/source-test:latest
+    container_name: native-zipper
+    command: ["sh", "-c", "./yomo wf run ./cmd/native-zipper/workflow.yaml"]
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    links:
+      - native-flow
+    depends_on:
+      - native-flow
+    ports:
+      - "7777:7777/udp"
+    networks:
+      - weaktest
+
+  native-source:
+    image: yomo/source-test:latest
+    container_name: native-source
+    command: ["sh", "-c", "go run ./cmd/native-source/main.go"]
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - YOMO_SOURCE_MQTT_ZIPPER_ADDR=native-zipper:7777
+      - YOMO_SOURCE_MQTT_SERVER_ADDR=0.0.0.0:3883
+    links:
+      - native-zipper
+    depends_on:
+      - native-zipper
+    ports:
+      - "3883:3883/udp"
+    networks:
+      - weaktest
+
+  native-emit:
+    image: yomo/source-test:latest
+    container_name: native-emit
+    command: ["sh", "-c", "go run ./cmd/native-emit/main.go"]
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - YOMO_SOURCE_MQTT_BROKER_ADDR=tcp://native-source:3883
+      - YOMO_SOURCE_MQTT_PUB_INTERVAL=500
+    links:
+      - native-source
+    depends_on:
+      - native-source
     networks:
       - weaktest
 

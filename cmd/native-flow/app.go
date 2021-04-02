@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/reactivex/rxgo/v2"
@@ -20,10 +21,27 @@ type NoiseData struct {
 	From  string  `y3:"0x13"`
 }
 
+var (
+	count int64 = 0
+	diff  int64 = 0
+	mu    sync.Mutex
+)
+
 var printer = func(_ context.Context, i interface{}) (interface{}, error) {
 	value := i.(NoiseData)
 	rightNow := time.Now().UnixNano() / int64(time.Millisecond)
 	fmt.Println(fmt.Sprintf("[%s] %d > value: %f ⚡️=%dms", value.From, value.Time, value.Noise, rightNow-value.Time))
+
+	mu.Lock()
+	count++
+	diff = diff + rightNow - value.Time
+	if count >= 50 {
+		fmt.Println(fmt.Sprintf("count=[%d] > average: ⚡️=%dms", count, diff/count))
+		count = 0
+		diff = 0
+	}
+	mu.Unlock()
+
 	return value.Noise, nil
 }
 
