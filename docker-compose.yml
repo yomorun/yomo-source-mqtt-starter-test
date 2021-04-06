@@ -8,8 +8,8 @@ services:
     restart: always
     cap_add:
       - NET_ADMIN
-    ports:
-      - "5252:5252/udp"
+#    ports:
+#      - "5252:5252/udp"
     networks:
       - weaktest
 
@@ -24,8 +24,8 @@ services:
       - broker-flow
     depends_on:
       - broker-flow
-    ports:
-      - "8888:8888/udp"
+#    ports:
+#      - "8888:8888/udp"
     networks:
       - weaktest
 
@@ -43,8 +43,8 @@ services:
       - broker-zipper
     depends_on:
       - broker-zipper
-    ports:
-      - "2883:2883"
+#    ports:
+#      - "2883:2883"
     networks:
       - weaktest
 
@@ -73,8 +73,8 @@ services:
     restart: always
     cap_add:
       - NET_ADMIN
-    ports:
-      - "6262:6262/udp"
+#    ports:
+#      - "6262:6262/udp"
     networks:
       - weaktest
 
@@ -89,8 +89,8 @@ services:
       - native-flow
     depends_on:
       - native-flow
-    ports:
-      - "7777:7777/udp"
+#    ports:
+#      - "7777:7777/udp"
     networks:
       - weaktest
 
@@ -108,8 +108,8 @@ services:
       - native-zipper
     depends_on:
       - native-zipper
-    ports:
-      - "3883:3883/udp"
+#    ports:
+#      - "3883:3883/udp"
     networks:
       - weaktest
 

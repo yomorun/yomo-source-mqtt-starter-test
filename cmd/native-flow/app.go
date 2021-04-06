@@ -22,6 +22,7 @@ type NoiseData struct {
 }
 
 var (
+	index int64 = 0
 	count int64 = 0
 	diff  int64 = 0
 	mu    sync.Mutex
@@ -33,10 +34,11 @@ var printer = func(_ context.Context, i interface{}) (interface{}, error) {
 	fmt.Println(fmt.Sprintf("[%s] %d > value: %f ⚡️=%dms", value.From, value.Time, value.Noise, rightNow-value.Time))
 
 	mu.Lock()
+	index++
 	count++
 	diff = diff + rightNow - value.Time
 	if count >= 50 {
-		fmt.Println(fmt.Sprintf("count=[%d] > average: ⚡️=%dms", count, diff/count))
+		fmt.Println(fmt.Sprintf("index=[%d] count=[%d] > average: ⚡️=%dms", index, count, diff/count))
 		count = 0
 		diff = 0
 	}
